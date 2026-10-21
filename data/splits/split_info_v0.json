@@ -1,0 +1,15 @@
+{
+    "method": "group_split_by_post_stratified_platform",
+    "seed": 2026,
+    "date": "2026-10-19",
+    "ratios": {
+        "train": 0.6,
+        "validation": 0.2,
+        "test": 0.2
+    },
+    "jumlah_komentar_per_split": {
+        "train": 874,
+        "test": 521,
+        "validation": 382
+    }
+}
