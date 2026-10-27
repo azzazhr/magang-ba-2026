@@ -13,4 +13,4 @@
   - Total Terisi: 200 / 200 baris
   - Sebaran Label: Positif (37), Netral (160), Negatif (3)
   - Jumlah Catatan RAGU: 2 baris
-- **Kesimpulan:** Secara umum pedoman v1 telah diterapkan dengan konsisten pada Batch 2, dengan seluruh frasa topik spesifik dan label sentimen tervalidasi dengan baik.
+- **Kesimpulan:** Secara umum pedoman v1 telah diterapkan dengan konsisten pada Batch 4, dengan seluruh frasa topik spesifik dan label sentimen tervalidasi dengan baik.
