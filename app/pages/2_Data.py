@@ -21,11 +21,21 @@ init_db()
 # --- KONTROL FILTER DI SIDEBAR ---
 st.sidebar.header("Filter Data Lanjutan")
 
-# 1. Filter Platform
+# Ambil koneksi database terlebih dahulu untuk memuat platform unik secara dinamis
+conn = get_conn()
+try:
+    df_all = pd.read_sql("SELECT DISTINCT platform FROM comments", conn)
+    available_platforms = df_all['platform'].dropna().unique().tolist()
+    if not available_platforms:
+        available_platforms = ["Instagram", "YouTube", "Twitter", "TikTok"]
+except Exception:
+    available_platforms = ["Instagram", "YouTube", "Twitter", "TikTok"]
+
+# 1. Filter Platform (menggunakan multiselect agar TikTok dan lainnya bisa dipilih)
 platforms_selected = st.sidebar.multiselect(
-    "Pilih Platform:", 
-    ["Instagram", "YouTube", "Twitter"], 
-    default=[]
+    "Pilih Platform:",
+    available_platforms,
+    default=available_platforms
 )
 
 # 2. Filter Rentang Tanggal
@@ -34,8 +44,8 @@ date_to = st.sidebar.date_input("Sampai Tanggal:", value=None)
 
 # 3. Filter Kategori Konten
 categories_selected = st.sidebar.multiselect(
-    "Pilih Kategori:", 
-    ["Sosial", "Ekonomi", "Pendidikan"], 
+    "Pilih Kategori:",
+    ["Sosial", "Ekonomi", "Pendidikan"],
     default=[]
 )
 
@@ -49,14 +59,13 @@ date_from_arg = date_from if date_from else None
 date_to_arg = date_to if date_to else None
 keyword_arg = keyword if keyword else None
 
-# Koneksi dan eksekusi fungsi filter_comments
-conn = get_conn()
+# Eksekusi fungsi filter_comments dengan koneksi yang sama
 df_res = filter_comments(
-    conn, 
-    platforms=platforms_arg, 
-    date_from=date_from_arg, 
-    date_to=date_to_arg, 
-    categories=categories_arg, 
+    conn,
+    platforms=platforms_arg,
+    date_from=date_from_arg,
+    date_to=date_to_arg,
+    categories=categories_arg,
     keyword=keyword_arg
 )
 conn.close()
