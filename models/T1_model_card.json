@@ -1,0 +1,12 @@
+{
+    "model_id": "crypter70/IndoBERT-Sentiment-Analysis",
+    "revision": "main",
+    "license": "mit",
+    "task": "text-classification",
+    "label_mapping": {
+        "positive": "positif",
+        "neutral": "netral",
+        "negative": "negatif"
+    },
+    "description": "Model IndoBERT fine-tuned untuk analisis sentimen bahasa Indonesia (Opsi B - Siap pakai)"
+}
