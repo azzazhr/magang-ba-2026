@@ -1,3 +1,5 @@
 experiment_id,model_type,max_features,ngram_range,train_samples,val_samples,val_accuracy
 svm_c1,LinearSVC,5000,"(1, 2)",676,145,0.8758620689655172
-T1_indobert,IndoBERT (max_length=128),N/A (Tokenizer),N/A,676,145,0.4206896551724138
+T1_indobert,IndoBERT (max_length=128),N/A (Tokenizer),,676,145,0.4206896551724138
+T2_indobert_len256,IndoBERT (max_length=256),N/A (Tokenizer),N/A,676,145,0.4206896551724138
+T3_indobert_len64,IndoBERT (max_length=64),N/A (Tokenizer),N/A,676,145,0.4206896551724138
