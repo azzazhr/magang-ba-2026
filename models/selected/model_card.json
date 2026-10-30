@@ -1,0 +1,14 @@
+{
+    "experiment_id": "T3_indobert_len64",
+    "model_id": "crypter70/IndoBERT-Sentiment-Analysis",
+    "revision": "main",
+    "task": "text-classification",
+    "max_length": 64,
+    "score_type": "softmax",
+    "label_mapping": {
+        "positive": "positif",
+        "neutral": "netral",
+        "negative": "negatif"
+    },
+    "description": "Model IndoBERT terpilih (T3) dengan max_length=64 untuk evaluasi akhir test set"
+}
