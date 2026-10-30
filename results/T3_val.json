@@ -1,0 +1,40 @@
+{
+    "experiment_id": "T3_indobert_len64",
+    "max_length": 64,
+    "accuracy": 0.4206896551724138,
+    "macro_f1": 0.3428267638793954,
+    "inference_duration_seconds": 19.424078226089478,
+    "classification_report": {
+        "negatif": {
+            "precision": 0.11764705882352941,
+            "recall": 0.5,
+            "f1-score": 0.19047619047619047,
+            "support": 8.0
+        },
+        "netral": {
+            "precision": 0.8181818181818182,
+            "recall": 0.3879310344827586,
+            "f1-score": 0.5263157894736842,
+            "support": 116.0
+        },
+        "positif": {
+            "precision": 0.21428571428571427,
+            "recall": 0.5714285714285714,
+            "f1-score": 0.3116883116883117,
+            "support": 21.0
+        },
+        "accuracy": 0.4206896551724138,
+        "macro avg": {
+            "precision": 0.383371530430354,
+            "recall": 0.48645320197044334,
+            "f1-score": 0.3428267638793954,
+            "support": 145.0
+        },
+        "weighted avg": {
+            "precision": 0.6920708095150286,
+            "recall": 0.4206896551724138,
+            "f1-score": 0.4767027286083547,
+            "support": 145.0
+        }
+    }
+}
