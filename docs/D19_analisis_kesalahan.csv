@@ -1,0 +1,50 @@
+evaluation_type,text,context,reference_label,predicted_label,error_category,explanation
+error,Rembangg 😂,Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,#KasusDSITPPUDuaKomaEmpatTriliun  #LenderDSIMenuntutPengembalianDana100Persen,Validation set,Negatif,netral,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,❤️,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,"Males ikut,tanggal tua",Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,Mau dong kalo ada😢,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,"Di Mesir kebohongan gerombolan Yahudi yaman baru terbongkar setelah 270 th berkuasa, sekarang di Indonesia dipuja puja, masih menganggap mereka keturunan Nabi. Padahal mereka anak keturunan mufty Belanda, gelangan2 yaman yg dibawa Belanda. Sudah waktunya rakyat Indonesia sadar, kalau sedang dijajah oleh gerombolan Yahudi yaman yg akan menguasai Indonesia.",Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,😍,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,Pasti bakalan jajan banyak nih,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,🔥🙌,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,eh baru sadar gak dapat mendali.. hehehe,Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,"Yang sabar nggeh pak, buk",Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,Hiyaa ternyata udah expired usianya 😄😄,Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,Oke gas,Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,"yang dapet, tapi besok ga bisa datang, mauu dongg",Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,"seru tuh ya seru,apa lagi topiknya menambah wawasan bgt",Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,Insyaaloh hadir,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,@fizz.nlh kangen sekel linu/njarem matt😖,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,Hah bantuan 500 per 3 bulan .. yaa allah 😢😢,Validation set,Negatif,netral,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,yallah😭,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,🔥🔥🔥,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,golek gandengan seng wani perorangan real gak atek nggandol rek 🙌,Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,🔥🔥🔥,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,Konten positif yang sangat dibutuhkan anak muda sekarang,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,@caksuudbp5  ayooo,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,"Emosi yang naik, karena ketidakpastian hukum yang dialami oleh korban DSI",Validation set,Positif,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,wes telat tiwas ngenteni klik slh angka lgs penuh kuota nya😂,Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,Adakah link utk mengaksesnya ? Biasakan ketika publikasi diluncurkan link Perda segera dapat diakses sehingga fungsi diseminasi informasi Setwan berjalan dengan baik dan hasil kinerja para wakil rakyat dapat diketahui dan dimanfaatkan oleh masyarat. Bukan hanya publikasi pelaksanaan kegiatan tapi hasil kerja para wakil rakyat dapat diketahui. Kalau ini dilakukan dampaknya akan bagus. Penilaian masyarakat pada wakil rakyat lebih obyektif ....,Validation set,Negatif,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,❤️,Validation set,Netral,positif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,Mepet bgt min infonya😮😮,Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+error,"sementara Aplikasiku ta hapus min, memoriku jebol, sesuk instal maneh 😂",Validation set,Netral,negatif,Lainnya / Ambigu,Model keliru menangkap konteks sentimen teks.
+correct,bangga pollll welll deserveee🔥🔥👏,Validation set,Positif,positif,N/A (Benar),Prediksi sesuai dengan label acuan.
+correct,Kapann di semarang ada niehh min,Validation set,Netral,netral,N/A (Benar),Prediksi sesuai dengan label acuan.
+correct,"Penthul Melikan, Tari Orèk-orèk",Validation set,Netral,netral,N/A (Benar),Prediksi sesuai dengan label acuan.
+correct,wayahe perdana tampil individu min perorangan 🙌🏻,Validation set,Netral,netral,N/A (Benar),Prediksi sesuai dengan label acuan.
+correct,"Mudah2an Allah berkahi hidupmu ya, nduk. Jadi kelingan jaman SD dulu. Paginya berangkat sekolah sambil jualan kripik singkong di sekolah. Kalo kedodong di halaman rumah berbuah ya jualannya nambah kedondong. Sorenya keliling dusun jualan tahu isi.",Validation set,Positif,positif,N/A (Benar),Prediksi sesuai dengan label acuan.
+correct,"acara nya keren, jadi ga sabar",Validation set,Positif,positif,N/A (Benar),Prediksi sesuai dengan label acuan.
+correct,Daftar nya mulai tgl berapa min??,Validation set,Netral,netral,N/A (Benar),Prediksi sesuai dengan label acuan.
+correct,"🌿✨ KEBAHAGIAAN DAN KEBERKAHAN HAUL SOLO ✨🌿
+Haul Al Habib Ali bin Muhammad Al-Habsyi 🤍
+Menghadiri haul bukan sekadar berkumpul, tetapi menjadi momentum untuk mengenang perjuangan para ulama, meneladani akhlaknya, memperbanyak shalawat, dan mendekatkan hati kepada Allah SWT. 🤲🏻
+Semoga melalui majelis yang penuh keberkahan ini, Allah SWT melimpahkan kepada kita ketenangan hati, keberkahan ilmu, kemudahan rezeki, serta kecintaan kepada Rasulullah ﷺ dan keluarga beliau. 🌸
+اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ
+🤲🏻 Semoga kita semua mendapatkan keberkahan, rahmat, dan syafaat Rasulullah ﷺ.
+Aamiin Ya Rabbal ‘Alamin. 🤍
+📌 Daily Latifah
+📲 @Daily_cilik
+#DailyLatifah #HaulSolo #HaulHabibAli #AlHabibAliBinMuhammadAlHabsyi #Haul #Shalawat #MajelisIlmu #KisahUlama #Keberkahan #Kebahagiaan #IslamicKids #AnakSholeh #AnakSholehah",Validation set,Positif,positif,N/A (Benar),Prediksi sesuai dengan label acuan.
+correct,Waw keren🔥,Validation set,Positif,positif,N/A (Benar),Prediksi sesuai dengan label acuan.
+correct,"ngatur ekonomi keluarga emang nggak gampang, jadi pengen tau tips dari narasumbernya",Validation set,Netral,netral,N/A (Benar),Prediksi sesuai dengan label acuan.
