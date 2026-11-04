@@ -45,3 +45,41 @@ def filter_comments(conn, platforms=None, date_from=None, date_to=None, categori
     sql = BASE_SQL + " WHERE " + " AND ".join(where)
 
     return pd.read_sql(sql, conn, params=params)
+
+
+def latest_predictions(conn, model_version=None):
+    """
+    Mengambil prediksi terbaru per comment_id menggunakan pola ROW_NUMBER() window function di SQLite.
+    """
+    query = """
+    WITH ranked_preds AS (
+        SELECT 
+            p.prediction_id,
+            p.comment_id,
+            p.model_name,
+            p.model_version,
+            p.predicted_label,
+            p.score,
+            p.score_type,
+            p.predicted_at,
+            p.run_id,
+            ROW_NUMBER() OVER (PARTITION BY p.comment_id ORDER BY p.predicted_at DESC) as rn
+        FROM predictions p
+        WHERE (:model_version IS NULL OR p.model_version = :model_version)
+    )
+    SELECT 
+        rp.comment_id,
+        c.text_original,
+        c.sentiment_label as ground_truth,
+        rp.predicted_label,
+        rp.score,
+        rp.score_type,
+        rp.model_version,
+        rp.predicted_at,
+        rp.run_id
+    FROM ranked_preds rp
+    LEFT JOIN comments c ON rp.comment_id = c.comment_id
+    WHERE rp.rn = 1
+    """
+    df = pd.read_sql(query, conn, params={"model_version": model_version})
+    return df
