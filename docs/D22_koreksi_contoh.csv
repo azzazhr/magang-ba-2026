@@ -1,0 +1,11 @@
+comment_id,prediksi,label koreksi,alasan
+IG-P004-C001,negatif,positif,Ekspresi dukungan positif terhadap program
+IG-P004-C002,positif,netral,"Komentar hanya berupa emoji tanpa teks pendukung, sehingga nuansa sentimennya lebih tepat dikategorikan netral."
+IG-P004-C003,netral,positif,Penggunaan kata sifat 'Indah' disertai emoji api (🔥🔥🔥) menunjukkan kekaguman dan apresiasi yang kuat terhadap suatu tempat.
+IG-P004-C004,positif,netral,Observasi situasi bersifat jenaka dan santai.
+IG-P004-C005,netral,positif,Ungkapan rasa syukur dan kebanggaan atas prestasi.
+IG-P004-C006,netral,positif,Ekspresi syukur dan kekaguman bernada positif.
+IG-P004-C007,netral,positif,Ungkapan rasa bangga dan pujian bernada positif.
+IG-P004-C008,netral,positif,Ekspresi rasa syukur dan kecintaan bernada positif.
+IG-P004-C009,netral,positif,Ungkapan rasa syukur yang sangat mendalam.
+IG-P004-C010,netral,positif,Ekspresi antusiasme dan apresiasi kesesuaian konsep.
