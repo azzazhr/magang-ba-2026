@@ -100,7 +100,7 @@ else:
         st.write(f"Platform: **{platform_name}** | Sumber Data: Internal Dataset (`{row['comment_id']}`)")
 
         # ==========================================
-        # FORM KOREKSI (Langkah 2 & 3)
+        # FORM KOREKSI
         # ==========================================
         st.markdown("### 📝 Formulir Koreksi Label")
         
@@ -117,7 +117,6 @@ else:
             
             if submitted:
                 try:
-                    # Memanggil fungsi add_verification yang ada di src/verify.py
                     prediction_id = int(row['id']) if 'id' in row and pd.notna(row['id']) else 1
                     add_verification(
                         conn=conn,
@@ -133,5 +132,27 @@ else:
                     st.error(f"Validasi Gagal: {ve}")
                 except Exception as e:
                     st.error(f"Terjadi kesalahan pada basis data: {e}")
+
+        # ==========================================
+        # 📜 TAMBAHAN LANGKAH 1 HARI 23: TABEL RIWAYAT
+        # ==========================================
+        st.markdown("---")
+        st.subheader("📜 Riwayat Koreksi Komentar Ini")
+
+        history_query = """
+            SELECT verified_at AS 'Waktu', 
+                   previous_label || ' → ' || new_label AS 'Perubahan Label', 
+                   reason AS 'Alasan', 
+                   reviewer_id AS 'Reviewer'
+            FROM verification_history
+            WHERE comment_id = ?
+            ORDER BY verified_at DESC
+        """
+        df_history = pd.read_sql(history_query, conn, params=(selected_id,))
+
+        if not df_history.empty:
+            st.dataframe(df_history, use_container_width=True)
+        else:
+            st.info("Belum ada riwayat koreksi untuk komentar ini.")
 
 conn.close()
