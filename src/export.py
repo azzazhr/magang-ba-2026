@@ -1,4 +1,7 @@
 import pandas as pd
+import json
+import zipfile
+import datetime
 from src.queries import filter_comments
 
 # Kontrak daftar kolom ekspor yang wajib dipatuhi (21 kolom)
@@ -23,11 +26,9 @@ def export_filtered(conn, filters=None):
                 if "content_category" in df_filtered.columns:
                     df_filtered = df_filtered[df_filtered["content_category"] == filters["content_category"]]
     except Exception as e:
-        # Fallback jika terjadi kendala pada fungsi queries
         query = "SELECT * FROM comments"
         df_filtered = pd.read_sql(query, conn)
 
-    # Jika dataframe kosong, kembalikan kerangka kolom kontrak
     if df_filtered.empty:
         return pd.DataFrame(columns=EXPORT_COLUMNS)
         
@@ -35,10 +36,45 @@ def export_filtered(conn, filters=None):
     pii_cols = ["username", "user_name", "author", "user_id"]
     df_filtered = df_filtered.drop(columns=[c for c in pii_cols if c in df_filtered.columns])
     
-    # Reindex kolom agar urutan dan nama selalu konsisten (kolom kosong otomatis bernilai NaN/kosong)
+    # Reindex kolom agar urutan dan nama selalu konsisten
     out = df_filtered.reindex(columns=EXPORT_COLUMNS)
     
     # Validasi pengaman (Assertion) untuk memastikan keamanan privasi
     assert not any(c in out.columns for c in ["username", "user_name", "author"]), "Pelanggaran privasi: Kolom PII terdeteksi!"
     
     return out
+
+def export_manifest(filters=None, n_rows=0, columns=None):
+    """
+    Menghasilkan metadata manifest ekspor dalam format JSON.
+    """
+    if columns is None:
+        columns = EXPORT_COLUMNS
+        
+    manifest = {
+        "exported_at": datetime.datetime.now().isoformat(),
+        "filters": filters if filters else {},
+        "n_rows": n_rows,
+        "data_version": "v1",
+        "split_manifest": "manifest_v1.csv",
+        "model_name": "Random Forest Sentiment Classifier",
+        "model_version": "v1.0",
+        "score_type": "probability",
+        "app_version": "2026-11-12",
+        "columns": columns
+    }
+    return manifest
+
+def create_export_zip(df, manifest, zip_filepath):
+    """
+    Membungkus DataFrame (sebagai data.csv) dan dictionary manifest (sebagai export_manifest.json) ke dalam arsip ZIP.
+    """
+    # Buat file CSV string di dalam memory
+    csv_data = df.to_csv(index=False)
+    manifest_data = json.dumps(manifest, indent=4)
+    
+    with zipfile.ZipFile(zip_filepath, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        zipf.writestr("data.csv", csv_data)
+        zipf.writestr("export_manifest.json", manifest_data)
+    
+    print(f"Arsip ZIP berhasil dibuat di: {zip_filepath}")
