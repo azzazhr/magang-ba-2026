@@ -12,6 +12,8 @@ import sqlite3
 import pandas as pd
 from src.predict import load_model, predict_and_store
 
+st.set_page_config(page_title="Analisis Sentimen", page_icon="📊", layout="wide")
+
 st.title("📊 Halaman Analisis Sentimen (Integrasi Model)")
 st.write("Gunakan halaman ini untuk menjalankan inferensi model terpilih secara interaktif dan menyimpannya ke database.")
 
