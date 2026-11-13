@@ -3,6 +3,44 @@ from datetime import datetime
 
 VALID = {"positif", "negatif", "netral"}
 
+def _verification_columns(conn):
+    return {
+        row[1]
+        for row in conn.execute("PRAGMA table_info(verification_history)")
+    }
+
+
+def _upgrade_history_table(conn, verification_columns):
+    if not {"comment_id", "label", "verified_at"} <= verification_columns:
+        return verification_columns
+    if {"prediction_id", "previous_label", "new_label", "reason", "reviewer_id"} <= verification_columns:
+        return verification_columns
+
+    conn.execute("""
+        CREATE TABLE verification_history_new (
+            history_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            comment_id TEXT NOT NULL,
+            prediction_id INTEGER,
+            previous_label TEXT,
+            new_label TEXT NOT NULL,
+            reason TEXT,
+            reviewer_id TEXT,
+            verified_at TIMESTAMP NOT NULL
+        )
+    """)
+    conn.execute("""
+        INSERT INTO verification_history_new
+        (comment_id, new_label, verified_at)
+        SELECT comment_id, label, verified_at
+        FROM verification_history
+    """)
+    conn.execute("DROP TABLE verification_history")
+    conn.execute(
+        "ALTER TABLE verification_history_new RENAME TO verification_history"
+    )
+    return _verification_columns(conn)
+
+
 def current_label(conn, comment_id):
     """
     Mengambil label terbaru untuk suatu komentar.
@@ -10,12 +48,15 @@ def current_label(conn, comment_id):
     jika belum, mengambil dari tabel predictions.
     """
     cursor = conn.cursor()
+    verification_columns = _verification_columns(conn)
+    label_column = "new_label" if "new_label" in verification_columns else "label"
+    order_columns = "history_id DESC, verified_at DESC" if "history_id" in verification_columns else "verified_at DESC"
     
     # 1. Cek apakah ada riwayat verifikasi sebelumnya
-    cursor.execute("""
-        SELECT new_label FROM verification_history 
-        WHERE comment_id = ? 
-        ORDER BY verified_at DESC LIMIT 1
+    cursor.execute(f"""
+        SELECT {label_column} FROM verification_history
+        WHERE comment_id = ?
+        ORDER BY {order_columns} LIMIT 1
     """, (comment_id,))
     row = cursor.fetchone()
     if row:
@@ -51,19 +92,28 @@ def add_verification(conn, comment_id, prediction_id, new_label, reason, reviewe
     # Ambil label sebelumnya (bisa dari koreksi terakhir atau prediksi awal)
     prev = current_label(conn, comment_id)            
 
-    # Masukkan data koreksi baru ke tabel verification_history
-    conn.execute("""
-        INSERT INTO verification_history 
-        (comment_id, prediction_id, previous_label, new_label, reason, reviewer_id, verified_at) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, (
-        comment_id, 
-        prediction_id, 
-        prev, 
-        new_label, 
-        reason.strip(), 
-        reviewer_id, 
-        datetime.now().isoformat(timespec="seconds")
-    ))
+    verification_columns = _upgrade_history_table(
+        conn, _verification_columns(conn)
+    )
+    verified_at = datetime.now().isoformat(timespec="seconds")
+
+    if {"prediction_id", "previous_label", "new_label", "reason", "reviewer_id"} <= verification_columns:
+        conn.execute("""
+            INSERT INTO verification_history
+            (comment_id, prediction_id, previous_label, new_label, reason, reviewer_id, verified_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            comment_id,
+            prediction_id,
+            prev,
+            new_label,
+            reason.strip(),
+            reviewer_id,
+            verified_at
+        ))
+    else:
+        raise sqlite3.OperationalError(
+            "Skema verification_history tidak didukung"
+        )
     
     conn.commit()
