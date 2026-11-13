@@ -9,7 +9,9 @@ from src.db import get_conn, init_db
 from src.importer import import_posts, import_comments
 from src.quality import check_required, check_rows, check_duplicates_and_conflicts
 
-st.title("Impor Data v0 ke Database SQLite")
+st.set_page_config(page_title="Impor Data", page_icon="📥", layout="wide")
+
+st.title("📥 Impor Data v0 ke Database SQLite")
 st.write("Unggah file CSV (Posts atau Comments) untuk dimasukkan ke dalam database aplikasi.")
 
 # Pastikan tabel sudah terinisialisasi
@@ -18,6 +20,12 @@ init_db()
 # Pilih jenis data yang akan diimpor
 data_type = st.radio("Pilih Jenis Data:", ["Posts", "Comments"])
 uploaded_file = st.file_uploader(f"Pilih file CSV {data_type}", type=["csv"])
+
+# Inisialisasi variabel pelaporan agar selalu aman (tidak NameError)
+dup_in_file = pd.DataFrame()
+dup_text = pd.DataFrame()
+same = pd.DataFrame()
+conflict = pd.DataFrame()
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
@@ -75,12 +83,12 @@ if uploaded_file is not None:
 
         st.success("Impor selesai!")
         col1, col2, col3 = st.columns(3)
-        col1.metric("Diterima", res["diterima"])
+        col1.metric("Diterima", res.get("diterima", 0))
         col2.metric("Dilewati", res.get("dilewati", 0) + len(same))
-        col3.metric("Ditolak", len(res["ditolak"]) + len(dup_in_file) + len(dup_text) + len(conflict))
+        col3.metric("Ditolak", len(res.get("ditolak", [])) + len(dup_in_file) + len(dup_text) + len(conflict))
 
         # Gabungkan daftar baris ditolak dengan temuan duplikat spesifik Hari 12
-        all_rejected = list(res["ditolak"])
+        all_rejected = list(res.get("ditolak", []))
         for idx, row in dup_in_file.iterrows():
             all_rejected.append((row["comment_id"], "Q03: ID komentar duplikat di dalam file"))
         for idx, row in dup_text.iterrows():
