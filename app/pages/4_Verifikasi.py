@@ -13,6 +13,8 @@ from datetime import datetime
 from src.queries import latest_predictions
 from src.verify import add_verification, current_label
 
+st.set_page_config(page_title="Verifikasi & Detail Prediksi", page_icon="🔍", layout="wide")
+
 st.title("🔍 Halaman Verifikasi & Detail Prediksi")
 st.write("Gunakan halaman ini untuk memverifikasi detail prediksi, konteks unggahan, dan melakukan koreksi label secara transparan.")
 
@@ -139,16 +141,39 @@ else:
         st.markdown("---")
         st.subheader("📜 Riwayat Koreksi Komentar Ini")
 
-        history_query = """
-            SELECT verified_at AS 'Waktu', 
-                   previous_label || ' → ' || new_label AS 'Perubahan Label', 
-                   reason AS 'Alasan', 
-                   reviewer_id AS 'Reviewer'
-            FROM verification_history
-            WHERE comment_id = ?
-            ORDER BY verified_at DESC
-        """
-        df_history = pd.read_sql(history_query, conn, params=(selected_id,))
+        verification_columns = pd.read_sql(
+            "PRAGMA table_info(verification_history)", conn
+        )["name"].tolist()
+        history_order = (
+            "history_id DESC, verified_at DESC"
+            if "history_id" in verification_columns
+            else "verified_at DESC"
+        )
+        if {"previous_label", "new_label", "reason", "reviewer_id"} <= set(verification_columns):
+            history_query = """
+                SELECT verified_at AS 'Waktu',
+                       previous_label || ' → ' || new_label AS 'Perubahan Label',
+                       reason AS 'Alasan',
+                       reviewer_id AS 'Reviewer'
+                FROM verification_history
+                WHERE comment_id = ?
+                ORDER BY {history_order}
+            """
+        else:
+            history_query = """
+                SELECT verified_at AS 'Waktu',
+                       label AS 'Perubahan Label',
+                       '-' AS 'Alasan',
+                       '-' AS 'Reviewer'
+                FROM verification_history
+                WHERE comment_id = ?
+                ORDER BY {history_order}
+            """
+        df_history = pd.read_sql(
+            history_query.format(history_order=history_order),
+            conn,
+            params=(selected_id,),
+        )
 
         if not df_history.empty:
             st.dataframe(df_history, use_container_width=True)
