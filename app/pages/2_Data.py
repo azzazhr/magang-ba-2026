@@ -13,7 +13,9 @@ sys.path.append(os.path.abspath(os.path.join(current_dir, '../../')))
 from src.db import get_conn, init_db
 from src.queries import filter_comments
 
-st.title("Eksplorasi & Filter Data Komentar")
+st.set_page_config(page_title="Eksplorasi & Filter Data Komentar", page_icon="🔍", layout="wide")
+
+st.title("🔍 Eksplorasi & Filter Data Komentar")
 st.write("Gunakan panel filter di sidebar sebelah kiri untuk menyaring data secara dinamis.")
 
 init_db()
