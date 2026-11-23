@@ -22,10 +22,11 @@ def predict_and_store(conn, comment_ids):
     clf, card = load_model()
     cursor = conn.cursor()
     placeholders = ','.join(['?'] * len(comment_ids))
-    cursor.execute(f"SELECT comment_id, text_original FROM comments WHERE comment_id IN ({placeholders})", comment_ids)
+    cursor.execute(f"SELECT comment_id, text_original, text_content FROM comments WHERE comment_id IN ({placeholders})", comment_ids)
     rows = cursor.fetchall()
     if not rows: return 0
-    ids, texts = [r[0] for r in rows], [r[1] for r in rows]
+    ids = [r[0] for r in rows]
+    texts = [r[1] if r[1] is not None and str(r[1]).strip() else r[2] for r in rows]
     outputs = clf(texts, batch_size=16)
     labels, scores = [map_english_to_indo(o["label"]) for o in outputs], [o["score"] for o in outputs]
     run_id = f"run-{datetime.now():%Y%m%d-%H%M%S}"
