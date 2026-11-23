@@ -25,9 +25,8 @@ def export_filtered(conn, filters=None):
             if "content_category" in filters and filters["content_category"] and filters["content_category"] != "Semua":
                 if "content_category" in df_filtered.columns:
                     df_filtered = df_filtered[df_filtered["content_category"] == filters["content_category"]]
-    except Exception as e:
-        query = "SELECT * FROM comments"
-        df_filtered = pd.read_sql(query, conn)
+    except Exception:
+        df_filtered = pd.read_sql("SELECT * FROM comments", conn)
 
     if df_filtered.empty:
         return pd.DataFrame(columns=EXPORT_COLUMNS)
