@@ -11,16 +11,15 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 from src.predict import load_model, predict_and_store
+from src.db import get_conn, init_db
 
 st.set_page_config(page_title="Analisis Sentimen", page_icon="📊", layout="wide")
 
 st.title("📊 Halaman Analisis Sentimen (Integrasi Model)")
 st.write("Gunakan halaman ini untuk menjalankan inferensi model terpilih secara interaktif dan menyimpannya ke database.")
 
-def get_connection():
-    return sqlite3.connect("data/sentiment.db")
-
-conn = get_connection()
+init_db()
+conn = get_conn()
 
 # ==========================================
 # 1. TAMPILKAN INFORMASI MODEL AKTIF
@@ -39,7 +38,10 @@ except Exception as e:
 st.subheader("2. Filter Komentar untuk Dianalisis")
 
 try:
-    df_comments = pd.read_sql("SELECT comment_id, text_original, sentiment_label FROM comments", conn)
+    df_comments = pd.read_sql(
+        "SELECT comment_id, text_original, text_content, split FROM comments",
+        conn,
+    )
 except Exception as e:
     st.error(f"Tabel 'comments' belum tersedia di database. Detail: {e}")
     df_comments = pd.DataFrame(columns=['comment_id', 'text_original', 'sentiment_label'])
@@ -51,7 +53,21 @@ if st.button("Jalankan Analisis"):
         st.warning("Data komentar kosong. Harap pastikan tabel database sudah terisi.")
     else:
         with st.spinner("Sedang memproses prediksi model..."):
-            sample_ids = df_comments['comment_id'].head(50).tolist()
+            if source_filter == "Semua Data":
+                source_ids = df_comments['comment_id'].tolist()
+            else:
+                try:
+                    split_df = pd.read_sql(
+                        "SELECT comment_id FROM comments WHERE lower(split) IN ('validation', 'val', 'validasi')",
+                        conn,
+                    )
+                    source_ids = split_df['comment_id'].tolist()
+                except Exception:
+                    source_ids = []
+            sample_ids = source_ids[:50]
+            if not sample_ids:
+                st.warning("Tidak ada komentar pada sumber data yang dipilih.")
+                st.stop()
             processed_count = predict_and_store(conn, sample_ids)
             
             st.success(f"Analisis selesai! Sebanyak **{processed_count} komentar** berhasil diproses dan disimpan.")
