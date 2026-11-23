@@ -46,10 +46,20 @@ def import_comments(conn, df):
             continue
 
         try:
+            commented_at = getattr(r, 'commented_at', '')
+            if pd.isna(commented_at) or str(commented_at).strip() == "":
+                commented_at = getattr(r, 'published_at', '')
+            context_text = getattr(r, 'context_text', getattr(r, 'context_target_phrase', ''))
+            category = getattr(r, 'content_category', '')
+            eligibility_status = getattr(r, 'eligibility_status', getattr(r, 'status_eksklusi', 'Aktif'))
+            is_eligible = 1 if str(eligibility_status).strip().lower() in ("aktif", "layak", "eligible", "lolos") else 0
+
             cur.execute("""
                 INSERT OR IGNORE INTO comments
-                (comment_id, post_id, text_content, text_original, text_hash, published_at, status_eksklusi, alasan_eksklusi, split)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (comment_id, post_id, text_content, text_original, text_hash, published_at,
+                 commented_at, context_text, content_category, is_eligible,
+                 status_eksklusi, alasan_eksklusi, split)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 str(r.comment_id),
                 str(r.post_id),
@@ -57,6 +67,10 @@ def import_comments(conn, df):
                 str(getattr(r, 'text_original', '')),
                 str(getattr(r, 'text_hash', '')),
                 str(getattr(r, 'published_at', '')),
+                str(commented_at),
+                str(context_text),
+                str(category),
+                is_eligible,
                 str(getattr(r, 'status_eksklusi', 'Aktif')),
                 str(getattr(r, 'alasan_eksklusi', 'Lolos')),
                 str(getattr(r, 'split', 'train'))
