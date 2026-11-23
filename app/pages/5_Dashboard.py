@@ -9,16 +9,15 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 from src.queries import filter_comments
+from src.db import get_conn, init_db
 
 st.set_page_config(page_title="Dashboard Analisis Sentimen", page_icon="📊", layout="wide")
 
 st.title("📊 Dashboard Analisis Sentimen & Kebijakan Publik")
 st.markdown("Eksplorasi data riil, distribusi sentimen, dan metrik verifikasi interaktif dengan filter terpusat.")
 
-def get_connection():
-    return sqlite3.connect("data/sentiment.db")
-
-conn = get_connection()
+init_db()
+conn = get_conn()
 
 # ==========================================
 # SIDEBAR: FILTER TERPUSAT (SESSION STATE)
@@ -119,8 +118,15 @@ with col_s2:
     if not df_filtered.empty and 'commented_at' in df_filtered.columns:
         try:
             df_filtered['dt'] = pd.to_datetime(df_filtered['commented_at'], errors='coerce')
-            trend = df_filtered.dropna(subset=['dt']).groupby(pd.Grouper(key='dt', freq='W')).size()
-            st.line_chart(trend)
+            dated = df_filtered.dropna(subset=['dt']).copy()
+            if not dated.empty:
+                trend = dated.set_index('dt').resample('W-SUN').size()
+                weekly_index = pd.date_range(start=pd.Timestamp('2026-07-05'), end=pd.Timestamp('2026-10-25'), freq='W-SUN')
+                trend = trend.reindex(weekly_index, fill_value=0)
+                trend.index = trend.index.strftime('%d %b')
+                st.line_chart(trend)
+            else:
+                st.info('Data tanggal tidak tersedia.')
         except Exception:
             st.info("Gagal merender tren.")
     else:
