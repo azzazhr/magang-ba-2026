@@ -28,7 +28,20 @@ same = pd.DataFrame()
 conflict = pd.DataFrame()
 
 if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+    try:
+        df = pd.read_csv(uploaded_file, encoding="utf-8")
+    except UnicodeDecodeError:
+        st.error("❌ File ditolak! Encoding file tidak valid (bukan UTF-8). Pastikan file CSV disimpan dengan format encoding UTF-8.")
+        st.stop()
+    except pd.errors.EmptyDataError:
+        st.error("❌ File ditolak! File CSV kosong atau tidak memiliki header/baris data.")
+        st.stop()
+    except pd.errors.ParserError as e:
+        st.error(f"❌ File ditolak! Format struktur CSV rusak dan tidak dapat diparsing: {e}")
+        st.stop()
+    except Exception as e:
+        st.error(f"❌ Terjadi kesalahan saat membaca file: {e}")
+        st.stop()
     
     # Validasi khusus jika memilih Comments
     if data_type == "Comments":
@@ -66,7 +79,7 @@ if uploaded_file is not None:
                 res = import_posts(conn, df)
             else:
                 # Gabungkan informasi split jika ada di manifest
-                if "manifest_v0.csv" in os.listdir("data/splits") and "split" not in df.columns:
+                if os.path.exists("data/splits") and "manifest_v0.csv" in os.listdir("data/splits") and "split" not in df.columns:
                     manifest = pd.read_csv("data/splits/manifest_v0.csv")
                     df = df.merge(manifest[["comment_id", "split"]], on="comment_id", how="left")
                 
