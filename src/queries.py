@@ -1,5 +1,26 @@
 import pandas as pd
 
+
+def infer_content_category(row):
+    text = " ".join(
+        ("" if pd.isna(row.get(column)) else str(row.get(column)))
+        for column in ("context_text", "text_original", "text_content")
+        if column in row
+    ).lower()
+
+    category_keywords = (
+        ("Kesehatan", ("kesehatan", "rumah sakit", "puskesmas", "dokter", "obat", "bpjs")),
+        ("Pendidikan", ("pendidikan", "sekolah", "kampus", "kuliah", "guru", "student", "lomba", "tahfidz")),
+        ("Transportasi", ("transportasi", "jalan", "tol", "kereta", "bus", "angkot", "parkir", "mobilitas")),
+        ("Infrastruktur", ("infrastruktur", "jembatan", "jalan", "bantuan air", "irigasi", "gedung", "banjir")),
+        ("Pelayanan Publik", ("pelayanan", "pendaftaran", "layanan", "samsat", "kantor", "administrasi", "berkas", "surat")),
+    )
+
+    for category, keywords in category_keywords:
+        if any(keyword in text for keyword in keywords):
+            return category
+    return "Pelayanan Publik"
+
 def filter_comments(conn, platform=None, platforms=None, category=None, categories=None, 
                     start_date=None, date_from=None, end_date=None, date_to=None, 
                     label=None, label_source=None, keyword=None, **kwargs):
@@ -67,12 +88,59 @@ def filter_comments(conn, platform=None, platforms=None, category=None, categori
     df["text_original"] = df["text_original"].fillna("Teks tidak tersedia")
 
     # 4. Normalisasi tanggal komentar
-    for col in ["commented_at", "published_at", "created_at"]:
+    df["commented_at"] = (
+        df["commented_at"].copy()
+        if "commented_at" in df.columns
+        else pd.Series(pd.NA, index=df.index)
+    )
+    for col in ["published_at", "created_at"]:
         if col in df.columns:
-            df["commented_at"] = df[col]
-            break
+            df["commented_at"] = df["commented_at"].fillna(df[col])
     if "commented_at" not in df.columns:
         df["commented_at"] = "2026-09-30"
+
+    # Gunakan kategori yang tersimpan atau kategorikan data lama berdasarkan teks.
+    if "content_category" not in df.columns:
+        df["content_category"] = df.apply(infer_content_category, axis=1)
+    else:
+        df["content_category"] = df["content_category"].where(
+            df["content_category"].notna()
+            & df["content_category"].astype(str).str.strip().ne("")
+            & df["content_category"].astype(str).str.lower().ne("nan"),
+            pd.NA,
+        )
+        df["content_category"] = df["content_category"].fillna(
+            df.apply(infer_content_category, axis=1)
+        )
+
+    if "is_eligible" not in df.columns:
+        eligibility_column = (
+            "status_eksklusi"
+            if "status_eksklusi" in df.columns
+            else "eligibility_status"
+        )
+        if eligibility_column in df.columns:
+            df["is_eligible"] = df[eligibility_column].astype(str).str.lower().isin(
+                ["aktif", "layak", "eligible", "lolos"]
+            ).astype(int)
+        else:
+            df["is_eligible"] = 1
+    else:
+        eligibility_column = (
+            "status_eksklusi"
+            if "status_eksklusi" in df.columns
+            else "eligibility_status"
+        )
+        eligible_by_status = (
+            df[eligibility_column].astype(str).str.lower().isin(
+                ["aktif", "layak", "eligible", "lolos"]
+            ).astype(int)
+            if eligibility_column in df.columns
+            else pd.Series(1, index=df.index)
+        )
+        df["is_eligible"] = pd.to_numeric(
+            df["is_eligible"], errors="coerce"
+        ).fillna(eligible_by_status).astype(int)
 
     # 5. Terapkan Filter Platform
     if selected_platforms and "platform" in df.columns:
@@ -173,58 +241,6 @@ def filter_comments(conn, platform=None, platforms=None, category=None, categori
 
 def latest_predictions(conn, model_version=None):
     """
-    Mengambil data prediksi terbaru dari database untuk halaman Verifikasi.
-    """
-    cursor = conn.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    all_tables = [t[0] for t in cursor.fetchall()]
-    
-    pred_table = None
-    for t in ['predictions', 'analysis_results', 'hasil_analisis']:
-        if t in all_tables:
-            pred_table = t
-            break
-            
-    if not pred_table:
-        return pd.DataFrame()
-        
-    try:
-        if model_version:
-            query = f"""
-                SELECT p.*, c.text_original, c.text_content, c.context_text, c.post_id 
-                FROM {pred_table} p
-                LEFT JOIN comments c ON p.comment_id = c.comment_id
-                WHERE p.model_version = ?
-                ORDER BY p.predicted_at DESC
-            """
-            df = pd.read_sql(query, conn, params=(model_version,))
-        else:
-            query = f"""
-                SELECT p.*, c.text_original, c.text_content, c.context_text, c.post_id 
-                FROM {pred_table} p
-                LEFT JOIN comments c ON p.comment_id = c.comment_id
-                ORDER BY p.predicted_at DESC
-            """
-            df = pd.read_sql(query, conn)
-            
-        # Normalisasi teks agar tidak kosong/nan
-        if 'text_original' in df.columns and 'text_content' in df.columns:
-            df['text_original'] = df['text_original'].fillna(df['text_content'])
-        elif 'text_content' in df.columns and 'text_original' not in df.columns:
-            df['text_original'] = df['text_content']
-            
-        if 'text_original' in df.columns and 'context_text' in df.columns:
-            df['text_original'] = df['text_original'].fillna(df['context_text'])
-            
-        df['text_original'] = df['text_original'].fillna("Teks tidak tersedia")
-            
-        return df
-    except Exception as e:
-        print(f"Error in latest_predictions: {e}")
-        return pd.DataFrame()
-
-def latest_predictions(conn, model_version=None):
-    """
     Mengambil prediksi terbaru per comment_id menggunakan pola ROW_NUMBER() window function di SQLite.
     """
     query = """
@@ -244,9 +260,9 @@ def latest_predictions(conn, model_version=None):
         WHERE (:model_version IS NULL OR p.model_version = :model_version)
     )
     SELECT
+        rp.prediction_id AS id,
         rp.comment_id,
         c.text_original,
-        c.sentiment_label as ground_truth,
         rp.predicted_label,
         rp.score,
         rp.score_type,
@@ -258,4 +274,7 @@ def latest_predictions(conn, model_version=None):
     WHERE rp.rn = 1
     """
     df = pd.read_sql(query, conn, params={"model_version": model_version})
+    if "text_original" not in df.columns:
+        df["text_original"] = pd.NA
+    df["text_original"] = df["text_original"].fillna("Teks tidak tersedia")
     return df
