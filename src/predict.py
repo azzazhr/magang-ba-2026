@@ -5,6 +5,7 @@ from datetime import datetime
 from transformers import pipeline
 
 def load_model():
+    """Memuat model dan tokenizer klasifikasi sentimen dari direktori penyimpanan."""
     card_path = "models/selected/model_card.json"
     with open(card_path, "r", encoding="utf-8") as f:
         card = json.load(f)
@@ -12,12 +13,14 @@ def load_model():
     return clf, card
 
 def map_english_to_indo(model_label):
+    """Memetakan label prediksi model berbahasa Inggris ke kategori sentimen bahasa Indonesia."""
     lbl = str(model_label).upper().strip()
     if 'POS' in lbl: return 'positif'
     elif 'NEG' in lbl: return 'negatif'
     else: return 'netral'
 
 def predict_and_store(conn, comment_ids):
+    """Menjalankan prediksi sentimen pada komentar dan menyimpan hasilnya ke basis data."""
     if not comment_ids: return 0
     clf, card = load_model()
     cursor = conn.cursor()

@@ -2,6 +2,7 @@ import pandas as pd
 
 
 def infer_content_category(row):
+    """Menentukan kategori konten komentar berdasarkan kata kunci pada teks terkait."""
     text = " ".join(
         ("" if pd.isna(row.get(column)) else str(row.get(column)))
         for column in ("context_text", "text_original", "text_content")

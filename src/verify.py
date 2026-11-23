@@ -4,6 +4,7 @@ from datetime import datetime
 VALID = {"positif", "negatif", "netral"}
 
 def _verification_columns(conn):
+    """Memastikan kolom status verifikasi dan koreksi tersedia pada tabel komentar."""
     return {
         row[1]
         for row in conn.execute("PRAGMA table_info(verification_history)")
@@ -11,6 +12,7 @@ def _verification_columns(conn):
 
 
 def _upgrade_history_table(conn, verification_columns):
+    """Membuat atau memperbarui struktur tabel riwayat verifikasi dan koreksi label."""
     if not {"comment_id", "label", "verified_at"} <= verification_columns:
         return verification_columns
     if {"prediction_id", "previous_label", "new_label", "reason", "reviewer_id"} <= verification_columns:

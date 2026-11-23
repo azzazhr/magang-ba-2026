@@ -14,6 +14,7 @@ EXPORT_COLUMNS = [
 
 def export_filtered(conn, filters=None):
     # Mengambil data yang telah difilter dan merapikan kolom sesuai kontrak EXPORT_COLUMNS tanpa PII.
+    """Mengekspor hasil penyaringan data ke berkas CSV beserta metadata manifest JSON."""
     try:
         df_filtered = filter_comments(conn)
         

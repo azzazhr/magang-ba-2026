@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score, classification_report
 from transformers import pipeline
 
 def main():
+    """Menjalankan evaluasi kinerja model pada dataset uji akhir."""
     print("Memuat model terpilih dan konfigurasi...")
     with open("models/selected/model_card.json", "r", encoding="utf-8") as f:
         selected_card = json.load(f)
@@ -43,6 +44,7 @@ def main():
     outputs = clf(texts_test, batch_size=16)
 
     def map_english_to_indo(model_label):
+        """Memetakan label prediksi model berbahasa Inggris ke kategori sentimen bahasa Indonesia."""
         lbl = str(model_label).upper().strip()
         if 'POS' in lbl:
             return 'positif'
@@ -55,8 +57,7 @@ def main():
     
     acc_test = accuracy_score(true_test_labels, preds_test)
     print(f"Akurasi Test Set: {acc_test:.4f}")
-    print("
-Classification Report Test Set:")
+    print("\nClassification Report Test Set:")
     print(classification_report(true_test_labels, preds_test, zero_division=0))
 
 if __name__ == "__main__":
