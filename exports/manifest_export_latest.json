@@ -1,0 +1,40 @@
+{
+  "exported_at_utc": "2026-11-23T03:02:29Z",
+  "dataset_file": "dataset_sentiment_filtered.csv",
+  "row_count": 915,
+  "column_count": 21,
+  "columns": [
+    "comment_id",
+    "post_id",
+    "platform",
+    "source_account",
+    "post_url",
+    "published_at",
+    "context_text",
+    "content_format",
+    "content_category",
+    "commented_at",
+    "text_original",
+    "split",
+    "data_version",
+    "pred_label",
+    "pred_score",
+    "score_type",
+    "model_version",
+    "verified_label",
+    "verify_reason",
+    "reviewer_id",
+    "verified_at"
+  ],
+  "data_versions": [
+    "v0"
+  ],
+  "model_versions": [
+    "T3_indobert_len64"
+  ],
+  "applied_filters": {
+    "platform": "Semua",
+    "content_category": "Semua"
+  },
+  "pii_included": false
+}
