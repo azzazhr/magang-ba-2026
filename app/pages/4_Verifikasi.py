@@ -10,6 +10,7 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 from datetime import datetime
+from src.db import get_conn, init_db
 from src.queries import latest_predictions
 from src.verify import add_verification, current_label
 
@@ -19,10 +20,8 @@ st.title("🔍 Halaman Verifikasi & Detail Prediksi")
 st.write("Gunakan halaman ini untuk memverifikasi detail prediksi, konteks unggahan, dan melakukan koreksi label secara transparan.")
 
 # Koneksi ke database SQLite
-def get_connection():
-    return sqlite3.connect("data/sentiment.db")
-
-conn = get_connection()
+init_db()
+conn = get_conn()
 
 # ==========================================
 # ATURAN FORMAT SKOR
@@ -58,7 +57,11 @@ except Exception:
 
 selected_version = st.sidebar.selectbox("Pilih Versi Model", [None] + model_versions)
 
-df_latest = latest_predictions(conn, selected_version)
+try:
+    df_latest = latest_predictions(conn, selected_version)
+except Exception as e:
+    df_latest = pd.DataFrame()
+    st.error(f"Gagal memuat prediksi dari database: {e}")
 
 if df_latest.empty:
     st.warning("Belum ada data prediksi yang tersimpan di database untuk versi ini.")
