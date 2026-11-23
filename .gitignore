@@ -1,0 +1,25 @@
+# Rahasia & konfigurasi lokal
+.env
+.env.*
+!.env.example
+
+# Cache & artefak sementara Python / Jupyter
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Basis data cadangan & file sementara besar
+data/backup/
+*.bak
+*.tmp
+*.log
+
+# Model & cache HuggingFace lokal besar
+models/
+.cache/
+
+# Virtual environment lokal
+.venv/
+venv/
