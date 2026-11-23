@@ -1,0 +1,4 @@
+id,deskripsi,sumber,fitur,dampak,rencana_hari
+IMP-01,Optimasi pemuatan awal halaman Analisis (lazy loading / caching model IndoBERT) agar waktu buka halaman lebih cepat,uji,Analisis Sentimen,Tinggi,Day 31
+IMP-02,Menambahkan tombol salin ID komentar cepat pada tabel halaman Data untuk mempermudah perpindahan ke form Verifikasi,alur lengkap,Data & Verifikasi,Sedang,Day 31
+IMP-03,Menampilkan indikator jumlah baris yang sedang diproses dan estimasi waktu pada progress bar halaman Analisis,uji,Analisis Sentimen,Rendah,Day 32
