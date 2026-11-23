@@ -1,0 +1,3 @@
+comment_id,post_id,text_original,commented_at,collected_at,data_version,eligibility_status
+TEST_CMT_DATE_1,TEST_POST_001,Alur pendaftaran online sekarang jauh lebih cepat dan mudah.,2026-99-99 25:61:00,2026-10-08 08:05:00,v0_test,Layak
+TEST_CMT_DATE_2,TEST_POST_001,Server pendaftaran sempat lambat pagi tadi mohon diperbaiki.,1998-05-12 08:00:00,2026-10-08 08:05:00,v0_test,Layak
